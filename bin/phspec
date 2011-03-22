@@ -1,0 +1,12 @@
+#!/usr/bin/php
+<?php
+# vim:ft=php
+
+require_once __DIR__.'/../lib/phspec.php';
+
+array_shift($argv);
+$dir = $argv ? array_shift($argv) : 'spec';
+
+foreach (glob("$dir/*_spec.php") as $spec) {
+    include $spec;
+}

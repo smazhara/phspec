@@ -7,11 +7,11 @@ function describe($name, $function) {
 }
 
 function it($name, $function) {
-    Runner::$current->add(new Spec($name, $function));
+    Runner::current()->add(new Spec($name, $function));
 }
 
-function expect($value) {
-    $expectation = new Expectation($value);
-    Runner::$current->spec->add($expectation);
+function check($value) {
+    $expectation = new Check($value);
+    Runner::current()->spec->add($expectation);
     return $expectation;
 }

@@ -3,27 +3,40 @@
 class Runner {
     static $current;
 
-    public $spec;
     public $specs = array();
 
-    function __construct($name, $spec) {
+    static function current() {
+        if (! isset(static::$current))
+            static::$current = new self('Default Runner', null);
+        return static::$current;
+    }
+
+    function __construct($name, $spec = null) {
         $this->name = $name;
-        $this->spec = $spec;
+        if ($spec)
+            $this->spec = $spec;
         static::$current = $this;
     }
 
     function run() {
         echo "Describe $this->name:\n";
+
+        if (! $this->specs) {
+            echo " No specs given!\n";
+            return;
+        }
+
         foreach ($this->specs as $spec)
         {
             echo " it $spec->name - ";
-            if (! $spec->expectations) {
-                echo "warning: no expectations";
+            if (! $spec->checks) {
+                echo "No checks given!\n";
+
             } elseif (! isset($spec->failed)) {
                 if ($spec->failed) {
                     echo "FAILED\n";
-                    foreach ($spec->failed_expectations as $expectation)
-                        echo "   $expectation->message\n";
+                    foreach ($spec->failed_checks as $check)
+                        echo "   $check->message\n";
                 } else {
                     echo "OK";
                 }
@@ -37,6 +50,10 @@ class Runner {
 
     function add(Spec $spec) {
         $this->specs[] = $this->spec = $spec;
+    }
+
+    function spec() {
+        return $this->spec = new Spec('Default Spec', null);
     }
 
     function failed_specs() {

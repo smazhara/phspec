@@ -1,20 +1,20 @@
 <?php
 
-class Expectation {
+class Check {
     function __construct($value) {
         $this->value = $value;
     }
 
     function is_true() {
-        $this->equal(true);
+        return $this->equal(true);
     }
 
     function is_false() {
-        $this->equal(false);
+        return $this->equal(false);
     }
 
     function is_null() {
-        $this->equal(null);
+        return $this->equal(null);
     }
 
     function equal($value) {
@@ -47,11 +47,26 @@ class Expectation {
         return $this->failed;
     }
 
+    function passed() {
+        return !$this->failed;
+    }
+
     function __get($name) {
-        return method_exists($this, $name) ? $this->$name() : $this->$name;
+        if (method_exists($this, $name))
+            return $this->$name();
+
+        if (function_exists($name))
+            return $this->equal($name($this->value));
+
+        return $this->$name;
+    }
+
+    function __call($name, $args) {
+        if (function_exists($name))
+            return $this->equal($name($this->value, $args[0]));
     }
 
     function spec() {
-        return $this->spec = Runner::$current->spec;
+        return $this->spec = Runner::current()->spec;
     }
 }
