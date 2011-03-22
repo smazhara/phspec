@@ -1,6 +1,8 @@
 <?php
 
 describe('Check', function() {
+    before(function() {
+    });
 
     it('should pass is_null if given null', function() {
         $check = new Check(null);
