@@ -52,13 +52,27 @@ class Check {
     }
 
     function __get($name) {
-        if (method_exists($this, $name))
-            return $this->$name();
+        $candidates = array($name);
+        if (substr($name, 0, 3) == 'is_')
+            $candidates[] = substr($name, 3);
+        else
+            $candidates[] = "is_$name";
 
-        if (function_exists($name))
-            return $this->equal($name($this->value));
+        foreach ($candidates as $method) {
+            if (method_exists($this, $method))
+                return $this->$method();
+        }
 
-        return $this->$name;
+        foreach ($candidates as $func) {
+            if (function_exists($func)) {
+                return $this->fail_unless(
+                    $func($this->value),
+                    "Expect bool(true), got bool(false)"
+                );
+            }
+        }
+
+        throw new Exception("Check does not have '$name' method");
     }
 
     function __call($name, $args) {

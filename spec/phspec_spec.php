@@ -22,16 +22,32 @@ describe('Check', function() {
         check($check->message)->is("Expected NULL, got int(1)");
     });
 
+    it('should respond to both <method> and is_<method>', function() {
+        $check = new Check(true);
+        $check->is_true;
+        check($check->passed);
+        check($check->passed)->true;
+        check($check->passed)->is_true;
+
+        $check = new Check('asdc');
+        $check->scalar;
+        check($check->passed);
+        check($check->passed)->true;
+        check($check->passed)->is_true;
+    });
+
+    //it('should pass `is` if given 
+
 });
-return;
+
+/*
 describe('Runner', function() {
 
     it('should have a name', function() {
-        return;
         $runner = new Runner('PHPSpec Runner', null);
 
-        check($runner)->is_a('Runner');
+        check($runner);//->is_a('Runner');
     });
 
 });
-
+*/

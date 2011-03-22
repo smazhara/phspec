@@ -3,8 +3,6 @@
 class Runner {
     static $current;
 
-    public $specs = array();
-
     static function current() {
         if (! isset(static::$current))
             static::$current = new self('Default Runner', null);
@@ -54,6 +52,10 @@ class Runner {
 
     function spec() {
         return $this->spec = new Spec('Default Spec', null);
+    }
+
+    function specs() {
+        return $this->specs = array($this->spec);
     }
 
     function failed_specs() {

@@ -11,7 +11,7 @@ function it($name, $function) {
 }
 
 function check($value) {
-    $expectation = new Check($value);
-    Runner::current()->spec->add($expectation);
-    return $expectation;
+    $check = new Check($value);
+    Runner::current()->spec->add($check);
+    return $check;
 }
