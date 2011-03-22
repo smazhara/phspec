@@ -5,21 +5,38 @@ class Check {
         $this->value = $value;
     }
 
-    function is_true() {
-        return $this->equal(true);
+    function true() {
+        return $this->is(true);
     }
 
-    function is_false() {
-        return $this->equal(false);
+    function false() {
+        return $this->is(false);
     }
 
-    function is_null() {
-        return $this->equal(null);
+    function null() {
+        return $this->is(null);
+    }
+
+    function match($regex) {
+        return $this->fail_unless(
+            preg_match($regex, $this->value),
+            "Expected ".$this->dump($value).", to match `$regex`"
+        );
+    }
+
+    function throws() {
+        $closure = $this->value;
+        try {
+            $closure();
+            return $this->fail("Exception expected, but none thrown");
+        } catch (Exception $e) {
+            return $this->pass;
+        }
     }
 
     function equal($value) {
         return $this->fail_unless(
-            $this->value === $value,
+            $this->value == $value,
             "Expected ".$this->dump($value).", got ".$this->dump($this->value)
         );
     }
@@ -31,19 +48,37 @@ class Check {
     }
 
     function is($value) {
-        return $this->equal($value);
+        return $this->fail_unless(
+            $this->value === $value,
+            "Expected ".$this->dump($value).", got ".$this->dump($this->value)
+        );
     }
 
     function fail_unless($true, $message) {
         $clone = clone($this);
-        $this->message = $message;
+        if (! $true)
+            $this->message = $message;
         $this->failed = ! $true;
 
         return $clone;
     }
 
+    function fail($message) {
+        $clone = clone($this);
+        $this->message = $message;
+        $this->failed = true;
+        return $clone;
+    }
+
+    function pass($message = null) {
+        $clone = clone($this);
+        $this->message = $message;
+        $this->failed = false;
+        return $clone;
+    }
+
     function failed() {
-        $this->is_true;
+        $this->true;
         return $this->failed;
     }
 
@@ -52,16 +87,14 @@ class Check {
     }
 
     function __get($name) {
+        if (method_exists($this, $name))
+            return $this->$name();
+
         $candidates = array($name);
         if (substr($name, 0, 3) == 'is_')
             $candidates[] = substr($name, 3);
         else
             $candidates[] = "is_$name";
-
-        foreach ($candidates as $method) {
-            if (method_exists($this, $method))
-                return $this->$method();
-        }
 
         foreach ($candidates as $func) {
             if (function_exists($func)) {
@@ -78,6 +111,8 @@ class Check {
     function __call($name, $args) {
         if (function_exists($name))
             return $this->equal($name($this->value, $args[0]));
+
+        throw new Exception("Check does not have '$name' method");
     }
 
     function spec() {
