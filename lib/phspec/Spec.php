@@ -1,13 +1,15 @@
 <?php
 
 class Spec {
+    static public $current;
+
     public $checks = array();
 
-    function __construct($name, $function) {
-        Runner::current()->spec = $this;
+    function __construct($name, $func) {
+        self::$current = $this;
         $this->name = $name;
-        if ($function)
-            $function();
+        if ($func)
+            $func();
     }
 
     function run() {
@@ -30,6 +32,12 @@ class Spec {
                 $this->failed_checks[] = $expectation;
         }
         return $this->failed_checks;
+    }
+
+    static function current() {
+        if (! isset(static::$current))
+            static::$current = new self('checks something', null);
+        return static::$current;
     }
 
     function __get($name) {

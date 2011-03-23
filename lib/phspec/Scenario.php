@@ -1,7 +1,13 @@
 <?php
 
-class Runner {
+class Scenario {
     static $current;
+
+    public $specs = array();
+    public $before = array();
+    public $before_each = array();
+    public $after = array();
+    public $after_each = array();
 
     static function current() {
         if (! isset(static::$current))
@@ -9,10 +15,8 @@ class Runner {
         return static::$current;
     }
 
-    function __construct($name, $spec = null) {
+    function __construct($name, $func = null) {
         $this->name = $name;
-        if ($spec)
-            $this->spec = $spec;
         static::$current = $this;
     }
 
@@ -23,6 +27,9 @@ class Runner {
             echo " No specs given!\n";
             return;
         }
+
+        foreach ($this->before as $block)
+            $block->run;
 
         foreach ($this->specs as $spec)
         {
@@ -46,16 +53,24 @@ class Runner {
              "failed: ".count($this->failed_specs)."\n";
     }
 
-    function add(Spec $spec) {
-        $this->specs[] = $this->spec = $spec;
+    function add($block) {
+        if ($block instanceof Spec)
+            return $this->specs[] = Spec::$current = $block;
+
+        if ($block instanceof Block) {
+            if ($block->is_before)
+                $this->before[] = $block;
+            if ($block->is_before_each)
+                $this->before_each[] = $block;
+            if ($block->is_after)
+                $this->after[] = $block;
+            if ($block->is_after_each)
+                $this->after_each[] = $block;
+        }
     }
 
     function spec() {
-        return $this->spec = new Spec('Default Spec', null);
-    }
-
-    function specs() {
-        return $this->specs = array($this->spec);
+        return $this->spec = Spec::current();
     }
 
     function failed_specs() {

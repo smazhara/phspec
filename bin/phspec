@@ -2,6 +2,7 @@
 <?php
 # vim:ft=php
 
+error_reporting(E_ALL);
 require_once __DIR__.'/../lib/phspec.php';
 
 array_shift($argv);

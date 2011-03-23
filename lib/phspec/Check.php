@@ -20,7 +20,7 @@ class Check {
     function match($regex) {
         return $this->fail_unless(
             preg_match($regex, $this->value),
-            "Expected ".$this->dump($value).", to match `$regex`"
+            "Expected $this->dump, to match `$regex`"
         );
     }
 
@@ -41,7 +41,10 @@ class Check {
         );
     }
 
-    function dump($value) {
+    function dump() {
+        $args = func_get_args();
+        $value = $args ? $args[0] : $this->value;
+
         ob_start();
         var_dump($value);
         return trim(ob_get_clean());
