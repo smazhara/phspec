@@ -25,13 +25,19 @@ class Check {
         );
     }
 
-    function throws() {
+    function throws($expected = 'Exception') {
         $closure = $this->value;
         try {
             $closure();
             return $this->fail("Exception expected, but none thrown");
         } catch (\Exception $e) {
-            return $this->pass;
+            $actual = get_class($e);
+            if ($actual == $expected)
+                return $this->pass;
+
+            return $this->fail(
+                "Exception `$expected` is expected, " .
+                "but `$actual` is thrown");
         }
     }
 

@@ -45,6 +45,14 @@ describe('Check', function() {
             throw new \Exception;
         })->throws;
     });
+
+    it('should pass `throws("MyException")` if MyException is thrown', function() {
+        class MyException extends \Exception {}
+        $check = new Check(true);
+        check(function() {
+            throw new MyException;
+        })->throws('Phspec\MyException');
+    });
     
     it('should delegate unknown checks to global functions', function() {
         $check = new Check(10);
