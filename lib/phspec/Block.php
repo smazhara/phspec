@@ -3,6 +3,11 @@ namespace Phspec;
 
 class Block {
 
+    function __construct($type, $func) {
+        $this->type = $type;
+        $this->func = $func;
+    }
+
     static function before($func) {
         return new self('before', $func);
     }
@@ -17,11 +22,6 @@ class Block {
 
     static function after_each($func) {
         return new self('after each', $func);
-    }
-
-    function __construct($type, $func) {
-        $this->type = $type;
-        $this->func = $func;
     }
 
     function run() {
