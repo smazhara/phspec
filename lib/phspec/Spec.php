@@ -13,10 +13,17 @@ class Spec {
 
     function run() {
         self::$current = $this;
-        echo " it $this->name - ";
+        echo "  it $this->name";
 
         $func = $this->func;
-        $func();
+        try {
+            $func();
+        } catch (PendingException $e) {
+            $this->pending = true;
+            $this->message = $e->getMessage();
+            echo " PENDING\n";
+            return;
+        }
 
         if (! $this->checks) {
             echo "No checks given!\n";
@@ -24,13 +31,13 @@ class Spec {
         }
 
         if ($this->failed) {
-            echo "FAILED\n";
+            echo " FAILED\n";
             foreach ($this->failed_checks as $check)
                 echo "   $check->message\n";
             echo "\n";
             return;
         }
-        echo "OK\n";
+        echo "\n";
     }
 
     function add($check) {

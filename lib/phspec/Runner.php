@@ -11,12 +11,16 @@ class Runner {
         $this->argv = $argv;
     }
 
-    function specs_dir() {
-        return $this->specs_dir = $this->argv ? array_pop($this->argv) : 'spec';
+    function spec() {
+        return $this->spec = $this->argv ? array_pop($this->argv) : 'spec';
     }
 
     function specs() {
-        return $this->specs = glob("$this->specs_dir/*_spec.php");
+        if (is_file($this->spec))
+            return $this->specs = array($this->spec);
+
+        if (is_dir($this->spec))
+            return $this->specs = glob("$this->spec/*_spec.php");
     }
 
     function run() {

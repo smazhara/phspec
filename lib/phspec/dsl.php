@@ -1,44 +1,47 @@
 <?php
-namespace Phspec;
 
 function scenario() {
-    return Scenario::current();
+    return Phspec\Scenario::current();
 }
 
 function spec() {
-    return Spec::current();
+    return Phspec\Spec::current();
 }
 
 function describe($name, $func) {
-    $scenario = new Scenario($name, $func);
+    $scenario = new Phspec\Scenario($name, $func);
     $func();
     $scenario->run();
 }
 
 function it($name, $func) {
-    return scenario()->add(new Spec($name, $func));
+    return scenario()->add(new Phspec\Spec($name, $func));
 }
 
 function check($value) {
-    return spec()->add(new Check($value));
+    return spec()->add(new Phspec\Check($value));
 }
 
 function before($func) {
-    return scenario()->add(Block::before($func));
+    return scenario()->add(Phspec\Block::before($func));
 }
 
 function before_each($func) {
-    return scenario()->add(Block::before_each($func));
+    return scenario()->add(Phspec\Block::before_each($func));
 }
 
 function after($func) {
-    return scenario()->add(Block::after($func));
+    return scenario()->add(Phspec\Block::after($func));
 }
 
 function after_each($func) {
-    return scenario()->add(Block::after_each($func));
+    return scenario()->add(Phspec\Block::after_each($func));
 }
 
 function at() {
     return scenario()->at;
+}
+
+function pending($message = 'No reason given') {
+    throw new Phspec\PendingException($message);
 }

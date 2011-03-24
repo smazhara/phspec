@@ -7,4 +7,5 @@ require_once 'phspec/Spec.php';
 require_once 'phspec/Check.php';
 require_once 'phspec/Scenario.php';
 require_once 'phspec/Block.php';
+require_once 'phspec/PendingException.php';
 require_once 'phspec/dsl.php';

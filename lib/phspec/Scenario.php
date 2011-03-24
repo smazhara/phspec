@@ -23,7 +23,7 @@ class Scenario {
     }
 
     function run() {
-        echo "Describe $this->name:\n";
+        echo "$this->name:\n";
 
         if (! $this->specs) {
             echo " No specs given!\n";
