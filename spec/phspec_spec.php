@@ -1,5 +1,5 @@
 <?php
-namespace Porcupine;
+namespace Phspec;
 
 describe('Scenario', function() {
     before(function() {
@@ -29,6 +29,8 @@ describe('Scenario', function() {
     });
 });
 
+// has to run outside of describe, otherwise we won't be able to catch 'after' 
+// call
 $steps = Scenario::current()->at->steps;
 check($steps)->equal(array(
     'before',
@@ -36,7 +38,7 @@ check($steps)->equal(array(
     'before_each', 'two', 'after_each',
     'after'
 ));
-exit;
+
 describe('Check', function() {
 
     it('should pass is_null if given null', function() {
@@ -90,7 +92,7 @@ describe('Check', function() {
     it('should pass `throws` if exception is thrown', function() {
         $check = new Check(true);
         check(function() {
-            throw new Exception;
+            throw new \Exception;
         })->throws;
     });
     

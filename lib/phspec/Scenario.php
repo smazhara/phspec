@@ -1,5 +1,5 @@
 <?php
-namespace Porcupine;
+namespace Phspec;
 
 class Scenario {
     static $current;

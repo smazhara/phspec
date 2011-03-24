@@ -1,5 +1,5 @@
 <?php
-namespace Porcupine;
+namespace Phspec;
 
 function scenario() {
     return Scenario::current();

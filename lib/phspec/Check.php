@@ -1,5 +1,5 @@
 <?php
-namespace Porcupine;
+namespace Phspec;
 
 class Check {
     function __construct($value) {
@@ -30,7 +30,7 @@ class Check {
         try {
             $closure();
             return $this->fail("Exception expected, but none thrown");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->pass;
         }
     }
