@@ -1,4 +1,5 @@
 <?php
+namespace Porcupine;
 
 class Scenario {
     static $current;
@@ -11,11 +12,12 @@ class Scenario {
 
     static function current() {
         if (! isset(static::$current))
-            static::$current = new self('Default Runner', null);
+            static::$current = new self('Default Scenario', null);
         return static::$current;
     }
 
     function __construct($name, $func = null) {
+        $this->at = new \stdClass;
         $this->name = $name;
         static::$current = $this;
     }
@@ -29,25 +31,21 @@ class Scenario {
         }
 
         foreach ($this->before as $block)
-            $block->run;
+            $block->run();
 
         foreach ($this->specs as $spec)
         {
-            echo " it $spec->name - ";
-            if (! $spec->checks) {
-                echo "No checks given!\n";
+            foreach ($this->before_each as $block)
+                $block->run();
 
-            } elseif (! isset($spec->failed)) {
-                if ($spec->failed) {
-                    echo "FAILED\n";
-                    foreach ($spec->failed_checks as $check)
-                        echo "   $check->message\n";
-                } else {
-                    echo "OK";
-                }
-            }
-            echo "\n";
+            $spec->run();
+
+            foreach ($this->after_each as $block)
+                $block->run();
         }
+
+        foreach ($this->after as $block)
+            $block->run();
 
         echo "Total specs: ".count($this->specs)." ".
              "failed: ".count($this->failed_specs)."\n";
@@ -55,9 +53,9 @@ class Scenario {
 
     function add($block) {
         if ($block instanceof Spec)
-            return $this->specs[] = Spec::$current = $block;
+            $this->specs[] = Spec::$current = $block;
 
-        if ($block instanceof Block) {
+        elseif ($block instanceof Block) {
             if ($block->is_before)
                 $this->before[] = $block;
             if ($block->is_before_each)
@@ -67,6 +65,8 @@ class Scenario {
             if ($block->is_after_each)
                 $this->after_each[] = $block;
         }
+
+        return $block;
     }
 
     function spec() {
@@ -74,12 +74,15 @@ class Scenario {
     }
 
     function failed_specs() {
-        $this->failed_specs = array();
-        foreach ($this->specs as $spec) {
-            if ($spec->failed)
-                $this->failed_specs[] = $spec;
-        }
-        return $this->failed_specs;
+        return $this->failed_specs = array_filter($this->specs,
+            function($spec) {
+                return $spec->failed;
+            }
+        );
+    }
+
+    function scen() {
+        return $this->scen;
     }
 
     function __get($name) {

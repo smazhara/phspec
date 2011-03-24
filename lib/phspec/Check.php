@@ -1,4 +1,5 @@
 <?php
+namespace Porcupine;
 
 class Check {
     function __construct($value) {

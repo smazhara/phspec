@@ -1,4 +1,5 @@
 <?php
+namespace Porcupine;
 
 class Block {
 
@@ -18,14 +19,14 @@ class Block {
         return new self('after each', $func);
     }
 
-    function __construct($type, $function) {
+    function __construct($type, $func) {
         $this->type = $type;
-        $this->function = $function;
+        $this->func = $func;
     }
 
     function run() {
-        $function = $this->function;
-        $function();
+        $func = $this->func;
+        $func();
     }
 
     function runner() {

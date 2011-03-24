@@ -1,33 +1,44 @@
 <?php
+namespace Porcupine;
 
-function describe($name, $function) {
-    $scenario = new Scenario($name, $function);
-    $function();
+function scenario() {
+    return Scenario::current();
+}
+
+function spec() {
+    return Spec::current();
+}
+
+function describe($name, $func) {
+    $scenario = new Scenario($name, $func);
+    $func();
     $scenario->run();
 }
 
-function it($name, $function) {
-    Scenario::current()->add(new Spec($name, $function));
+function it($name, $func) {
+    return scenario()->add(new Spec($name, $func));
 }
 
 function check($value) {
-    $check = new Check($value);
-    Spec::current()->add($check);
-    return $check;
+    return spec()->add(new Check($value));
 }
 
 function before($func) {
-    Scenario::current()->add(Block::before($func));
+    return scenario()->add(Block::before($func));
 }
 
 function before_each($func) {
-    Scenario::current()->add(Block::before_each($func));
+    return scenario()->add(Block::before_each($func));
 }
 
 function after($func) {
-    Scenario::current()->add(Block::after($func));
+    return scenario()->add(Block::after($func));
 }
 
 function after_each($func) {
-    Scenario::current()->add(Block::after_each($func));
+    return scenario()->add(Block::after_each($func));
+}
+
+function at() {
+    return scenario()->at;
 }

@@ -1,4 +1,5 @@
 <?php
+namespace Porcupine;
 
 class Spec {
     static public $current;
@@ -6,19 +7,35 @@ class Spec {
     public $checks = array();
 
     function __construct($name, $func) {
-        self::$current = $this;
         $this->name = $name;
-        if ($func)
-            $func();
+        $this->func = $func;
     }
 
     function run() {
-        $function = $this->function;
-        $function();
+        self::$current = $this;
+        echo " it $this->name - ";
+
+        $func = $this->func;
+        $func();
+
+        if (! $this->checks) {
+            echo "No checks given!\n";
+            return;
+        }
+
+        if ($this->failed) {
+            echo "FAILED\n";
+            foreach ($this->failed_checks as $check)
+                echo "   $check->message\n";
+            echo "\n";
+            return;
+        }
+        echo "OK\n";
     }
 
     function add($check) {
         $this->checks[] = $check;
+        return $check;
     }
 
     function failed() {
