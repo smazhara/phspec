@@ -18,7 +18,7 @@ class Spec {
         $func = $this->func;
         try {
             $func();
-        } catch (PendingException $e) {
+        } catch (\Exception $e) {
             $this->pending = true;
             $this->message = $e->getMessage();
             echo " PENDING\n";

@@ -20,6 +20,7 @@ class Scenario {
         $this->at = new \stdClass;
         $this->name = $name;
         static::$current = $this;
+        Runner::current()->add($this);
     }
 
     function run() {
@@ -49,6 +50,10 @@ class Scenario {
 
         echo "Total specs: ".count($this->specs)." ".
              "failed: ".count($this->failed_specs)."\n";
+    }
+
+    function failed() {
+        return $this->failed = !!count($this->failed_specs);
     }
 
     function add($block) {

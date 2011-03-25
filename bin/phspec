@@ -4,4 +4,4 @@
 
 require_once __DIR__.'/../lib/phspec.php';
 
-Phspec\Runner::main(@$argv);
+exit(Phspec\Runner::main(@$argv));

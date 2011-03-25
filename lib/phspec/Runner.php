@@ -2,13 +2,24 @@
 namespace Phspec;
 
 class Runner {
-    static function main($argv) {
-        $runner = new self($argv);
-        $runner->run();
-    }
+    static $current;
+    public $scenarios = array();
 
     function __construct($argv) {
         $this->argv = $argv;
+    }
+
+    static function main($argv) {
+        self::$current= new self($argv);
+        return self::$current->run();
+    }
+
+    static function current() {
+        return static::$current;
+    }
+
+    function add($scenario) {
+        $this->scenarios[] = $scenario;
     }
 
     function spec() {
@@ -26,9 +37,26 @@ class Runner {
     function run() {
         $opts = getopt('hv');
 
-        foreach ($this->specs as $spec) {
+        foreach ($this->specs as $spec)
             include $spec;
+
+        echo "\nTotal scenarios: ".count($this->scenarios).
+             ", failed: ".count($this->failed_scenarios)."\n";
+
+        return $this->failed ? 1 : 0;
+    }
+
+    function failed_scenarios() {
+        $this->failed_scenarios = array();
+        foreach ($this->scenarios as $scenario) {
+            if ($scenario->failed)
+                $this->failed_scenarios[] = $scenario;
         }
+        return $this->failed_scenarios;
+    }
+
+    function failed() {
+        return $this->failed = !!$this->failed_scenarios;
     }
 
     function __get($name) {
