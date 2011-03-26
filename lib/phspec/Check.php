@@ -70,6 +70,13 @@ class Check {
         );
     }
 
+    function is_not($value) {
+        return $this->fail_unless(
+            $this->value !== $value,
+            "Expected ".$this->dump($value).", got ".$this->dump($this->value)
+        );
+    }
+
     function fail_unless($true, $message) {
         $clone = clone($this);
         if (@$this->not)
@@ -142,7 +149,7 @@ class Check {
         if (function_exists($name))
             return $this->equal($name($this->value, $args[0]));
 
-        throw new Exception("Check does not have '$name' method");
+        throw new \Exception("Check does not have '$name' method");
     }
 
     function spec() {

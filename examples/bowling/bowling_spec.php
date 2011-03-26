@@ -8,9 +8,4 @@ describe('Bowling::score', function() {
             $bowling->hit(0);
         check($bowling->score)->is(0);
     });
-
-    it('pending', function() {
-        pending('not done yet');
-        die('here');
-    });
 });
