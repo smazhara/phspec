@@ -2,6 +2,8 @@
 namespace Phspec;
 
 class Check {
+    private $not = false;
+
     function __construct($value) {
         $this->value = $value;
     }
@@ -41,6 +43,10 @@ class Check {
         }
     }
 
+    function negate() {
+        $this->not = true;
+    }
+
     function equal($value) {
         return $this->fail_unless(
             $this->value == $value,
@@ -66,6 +72,8 @@ class Check {
 
     function fail_unless($true, $message) {
         $clone = clone($this);
+        if (@$this->not)
+            $true = !$true;
         if (! $true)
             $this->message = $message;
         $this->failed = ! $true;
@@ -97,6 +105,18 @@ class Check {
     }
 
     function __get($name) {
+        // empty is not a function has to be treated specially
+        if ($name == 'empty') {
+            return $this->fail_unless(
+                empty($this->value),
+                "Expected $this->dump to be empty");
+        }
+
+        if (substr($name, 0, 4) == 'not_') {
+            $name = substr($name, 4);
+            $this->negate;
+        }
+
         if (method_exists($this, $name))
             return $this->$name();
 
@@ -115,7 +135,7 @@ class Check {
             }
         }
 
-        throw new Exception("Check does not have '$name' method");
+        throw new \Exception("Check does not have '$name' method");
     }
 
     function __call($name, $args) {

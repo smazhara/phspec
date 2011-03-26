@@ -45,3 +45,7 @@ function at() {
 function pending($message = 'No reason given') {
     throw new Phspec\PendingException($message);
 }
+
+function stub($obj) {
+    return new Phspec\Stubber($obj);
+}

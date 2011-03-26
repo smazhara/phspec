@@ -59,5 +59,11 @@ describe('Check', function() {
         $check->numeric;
         check($check->passed);
     });
+
+    it('should revert check when prepended with `not_`', function() {
+        $check = new Check(10);
+        $check->not_string;
+        check($check->passed);
+    });
 });
 
